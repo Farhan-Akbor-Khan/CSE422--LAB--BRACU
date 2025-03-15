@@ -1,0 +1,135 @@
+##Lab01
+##Name: Farhan Akbor Khan
+##ID: 20301230
+##Section: 05
+
+
+
+def heuristic(value1):
+    return dict1[value1]
+
+def my_fun(value2,dict2):
+    return dict2[value2]
+
+def A_star_search(initial_node, goal_node,dict2):
+    new_dict = {}
+    new_dict[initial_node] = 0
+    parent_dict = {}
+    parent_dict[initial_node] = initial_node
+    unvisited_node = [initial_node]
+    visited_node = []
+
+    while len(unvisited_node) >= 1:
+        temp = 0
+        for i in unvisited_node:
+            if temp == 0 or new_dict[i] + heuristic(i) < new_dict[temp] + heuristic(temp):
+                temp = i
+
+        if temp == 0:
+            print("NO PATH FOUND")
+            return 0
+
+        if temp == goal_node:
+            distance = []
+
+            while parent_dict[temp] != temp:
+                distance.append(temp)
+                temp = parent_dict[temp]
+
+            distance.append(initial_node)
+
+            distance.reverse()
+
+            print('Path:', ' ----> '.join(distance))
+            return distance
+
+        for (k, price) in my_fun(temp,dict2):
+
+            if k not in unvisited_node and k not in visited_node:
+                unvisited_node.append(k)
+                parent_dict[k] = temp
+                new_dict[k] = new_dict[temp] + price
+                #print(unvisited_node)
+
+            else:
+                if new_dict[k] > new_dict[temp] + price:
+                    new_dict[k] = new_dict[temp] + price
+                    parent_dict[k] = temp
+
+                    if k in visited_node:
+                        visited_node.remove(k)
+                        unvisited_node.append(k)
+
+        unvisited_node.remove(temp)
+        visited_node.append(temp)
+
+    print('NO PATH FOUND')
+    return 0
+
+#--------------------------------------------------------------------------------------#
+
+input1 =open("C:\\Users\\User\\Pictures\\input2.txt","r")
+data = input1.readlines()
+
+list1 = []
+for i in data:
+    list1.append(i.split(' ')[0])
+
+list2 = []
+for i in data:
+    list2.append(i.split(' ')[1])
+print(list1,"l1", list2,"l2")
+dict1 = {}
+for i in list1:
+    for j in list2:
+        dict1[i] = int(j)
+        list2.remove(j)
+        break
+
+input1.close()
+
+
+print(dict1,"dict1")
+
+input2= open("C:\\Users\\User\\Pictures\\input2.txt","r")
+data2 = input2.read()
+
+temp1 = data2.split('\n')
+temp2 = []
+for i in temp1:
+    temp2.append(i.split(" "))
+#print(temp2)
+list3 = []
+for i in temp2:
+    list3.append([(i[j], int(i[j + 1]))  for j in range(2, len(i)-1, 2)])
+#print(list3,"z")
+
+dict2= {}
+for i in list1:
+    for j in list3:
+        dict2[i] = j
+        list3.remove(j)
+        break
+print(dict2,"d")
+input2.close()
+
+initial_node = input("Initial Node:")
+goal_node = input("Goal Node:")
+
+record = A_star_search(initial_node,goal_node,dict2)
+#print(record,"record")
+dict3 = {}
+for i in record:
+    if i in dict2:
+        dict3[i]=dict2[i]
+#print(dict3,"dict3")
+sum = 0
+w=1
+while w < len(record):
+    if record[w- 1] in dict3.keys():
+        similar = [x for x in dict3[record[w - 1]] if record[w] in x]
+        final= [z[1] for z in similar]
+        sum = sum + final[0]
+    w = w + 1
+print('Total distance:', sum, 'km')
+
